@@ -1,14 +1,14 @@
-# Welcome to your CDK TypeScript project
+# sandbox-alb-nginx
 
-This is a blank project for CDK development with TypeScript.
+ホストによって返すファイルを変える
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+# 動作確認
+ALBのDNS名に `cdk deploy` 実行時に表示される `SandboxAlbNginxStack.LoadBalancerDnsName` の値を使って以下のコマンドを実行する
 
-## Useful commands
+```shell
+> curl http://<ALBのDNS名>:80/index.html
+<h1><default</h1>
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+> curl -H 'Host:example.com' http://<ALBのDNS名>:80/index.html
+<h1><example.com</h1>
+```

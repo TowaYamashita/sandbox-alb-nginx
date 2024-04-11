@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/tmp.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/sandbox-alb-nginx.ts",
   "watch": {
     "include": [
       "**"
