@@ -42,7 +42,16 @@ http {
     server {
         listen 80;
         server_name example.com;
-        root /var/www;
+        root /var/www/html;
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }
+
+    server {
+        listen 80;
+        server_name admin.example.com;
+        root /var/www/admin;
         location / {
             try_files $uri $uri/ =404;
         }
@@ -54,9 +63,14 @@ cat - << 'EOS' > /usr/share/nginx/html/index.html
 <h1><default</h1>
 EOS
 
-mkdir -p /var/www
-cat - << 'EOS' > /var/www/index.html
+mkdir -p /var/www/html
+cat - << 'EOS' > /var/www/html/index.html
 <h1><example.com</h1>
+EOS
+
+mkdir -p /var/www/admin
+cat - << 'EOS' > /var/www/admin/index.html
+<h1><admin.example.com</h1>
 EOS
 
 service nginx start

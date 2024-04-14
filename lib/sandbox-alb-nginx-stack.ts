@@ -11,6 +11,8 @@ export class SandboxAlbNginxStack extends Stack {
     super(scope, id, props);
 
     const certificateArn : string = this.node.tryGetContext('certificateArn');
+    const domainName : string = this.node.tryGetContext('domainName');
+
     const certificate = Certificate.fromCertificateArn(this, 'Certificate', certificateArn);
 
     const vpc = new Vpc(this, 'Vpc', {
@@ -52,7 +54,8 @@ export class SandboxAlbNginxStack extends Stack {
       shebang: '',
     });
     const userDataScript = readFileSync('assets/install.sh', 'utf-8').toString();
-    userData.addCommands(userDataScript);
+    const replaced = userDataScript.replace(/example\.com/g, domainName);
+    userData.addCommands(replaced);
 
     const ec2SecurityGroup = new SecurityGroup(this, 'Ec2SecurityGroup', {
       vpc: vpc,
