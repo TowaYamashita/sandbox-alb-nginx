@@ -1,6 +1,7 @@
 import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { Instance, InstanceClass, InstanceSize, InstanceType, MachineImage, Peer, Port, SecurityGroup, SubnetType, UserData, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { ApplicationLoadBalancer, Protocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { ApplicationLoadBalancer, ApplicationProtocol, Protocol } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { InstanceIdTarget } from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
 import { Construct } from 'constructs';
 import { readFileSync } from "fs";
@@ -8,6 +9,9 @@ import { readFileSync } from "fs";
 export class SandboxAlbNginxStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
+
+    const certificateArn : string = this.node.tryGetContext('certificateArn');
+    const certificate = Certificate.fromCertificateArn(this, 'Certificate', certificateArn);
 
     const vpc = new Vpc(this, 'Vpc', {
       maxAzs: 2,
@@ -70,8 +74,15 @@ export class SandboxAlbNginxStack extends Stack {
       userData: userData,
     });
     
-    const listener = alb.addListener('Listener', { port: 80 });
+    const listener = alb.addListener('Listener', {
+      protocol: ApplicationProtocol.HTTPS,
+      port: 443,
+      certificates: [
+        certificate,
+      ],
+    });
     listener.addTargets(`ListenerTarget`, {
+      protocol: ApplicationProtocol.HTTP,
       port: 80,
       targets: [
         new InstanceIdTarget(instance.instanceId)
