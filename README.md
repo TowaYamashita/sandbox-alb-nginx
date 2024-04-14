@@ -17,12 +17,12 @@
   - 以下の実行例は、domainNameがexample.comの場合の表示です。
 
 ```shell
-> curl -k http://<ALBのDNS名>:10443/index.html
+> curl -k https://<ALBのDNS名>:443/index.html
 <h1><default</h1>
 
-> curl -k -H 'Host:example.com' http://<ALBのDNS名>:10443/index.html
+> curl -k -H 'Host:example.com' https://<ALBのDNS名>:443/index.html
 <h1><example.com</h1>
 
-> curl -k -H 'Host:admin.example.com' http://<ALBのDNS名>:10443/index.html
+> curl -k -H 'Host:admin.example.com' https://<ALBのDNS名>:443/index.html
 <h1>admin.example.com</h1>
 ```
